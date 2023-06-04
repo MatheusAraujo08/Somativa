@@ -1,0 +1,180 @@
+create database formativaHogwarts;
+
+use formativaHogwarts;
+
+ALTER TABLE usuarios
+add COLUMN imagem mediumtext null;
+
+ALTER TABLE usuarios
+add COLUMN numeroTelefone varchar(11) not null;
+
+create table progresso(
+	id bigint not null auto_increment,
+    status enum('Não iniciada', 'Em andamento', 'Concluida', 'Encerrada'),
+	andamento date,
+    conclusao date,
+    comentarios varchar(300) not null,
+	fotos mediumtext null,
+    primary key(id)
+);
+create table tarefas(
+	id bigint not null auto_increment,
+    descricao varchar(300) not null,
+    abertura date not null,
+	prazo int not null,
+    fechamento date,
+    solicitacao bigint not null,
+	localFK bigint not null,
+    progresso bigint not null,
+    primary key(id),
+	foreign key(solicitacao) references usuarios(id),
+	foreign key(localFK) references locais(id),
+    foreign key(progresso) references progresso(id)
+);
+
+create table responsaveis(
+	id bigint not null auto_increment,
+    tarefasFK bigint not null,
+    responsavelFK bigint not null,
+    foreign key(tarefasFK) references tarefas(id),
+    foreign key(responsavelFK) references usuarios(id),
+    primary key(id)
+);
+
+insert into nivelacesso (nivel) values 
+('ADMIN'),('GESTOR'),('USUARIO'),('VISITANTE');
+
+insert into ocupacao (titulo, nivelAcessoFK) values 
+('Professor', 3),('Secretária', 3),('Coordenador', 2),('Orientador', 2),
+('Aluno', 4),('Analista de Sistemas', 1),('Diretor', 1);
+
+insert into item (nome) values 
+('Projetor'),('Tablet'),('Ar condicionado'),('Monitor'),('TV Smart'),('Som');
+
+insert into checklist(localFK, itemFK) values
+(1,2),(1,5),(1,6),(1,3),
+(2,1),(2,2),
+(3,3),(3,4),(3,5),
+(4,1),(4,3),(4,5),(4,6);
+
+insert into checkin (eventoFK, usuarioFK, data) values 
+(1,2,now()),
+(1,1,'2023-01-01 00:00:00'),
+(1,5,now()),
+(2,6,now()),
+(2,4,now()),
+(3,1,'2023-05-05 00:00:00'),
+(3,2,now()),
+(3,4,now()),
+(3,6,'2023-08-08 00:00:00'),
+(4,1,now()),
+(4,4,now()),(4,6,now()), 
+(7,2,now());
+
+
+insert into tarefas (descricao, abertura, prazo, solicitacao, localFK, progresso) values 
+("Formatação do computador: Computador não está ligando","2023-03-02", 1, 3, 2, 4), 
+("Verificar ar condicionado: O ar condicionado não refrigera a sala", "2023-03-21", 2, 5, 1, 4), 
+("Tela riscado: A tela do PC está riscada", "2023-03-11", 3, 2, 1, 1),
+("Conserto ventilador: Ventilador não gira", "2023-03-31", 4, 3, 2, 2), 
+("Teclado do PC: Teclas do PC 1 não funcionam", "2023-03-23", 5, 2, 3, 4),
+("Internet da sala: Sala esta sem internet", "2023-03-07", 6, 1, 2, 1);
+
+ insert into tarefas (descricao, abertura, prazo, solicitacao, localFK, progresso) values 
+("Formatação do computador: Computador não está ligando","2023-03-02", 2, 0, 2, 4);
+insert into tarefas (descricao, abertura, prazo, solicitacao, localFK, progresso) values 
+("Internet da sala: Sala esta sem internet", "2023-03-31", 4, 3, 2, 2);
+
+ insert into responsaveis (tarefasFK, responsavelFK) values 
+ (1, 3), (2, 4), (3, 1), (4, 2), (3, 4), (2, 4);
+
+ insert into eventos (nome, inicio,fim, inicioCheckin, fimCheckin, vagas, localFk) values
+('Workshop Cloud Básico', '2023-05-26 18:45:00', '2023-05-26 23:45:00', '2023-05-26 18:45:00', '2023-05-26 23:45:00', 30, 2), 
+('Workshop Desenho SolidWorks', '2023-06-26 18:45:00', '2023-06-26 23:45:00', '2023-06-01 18:45:00', '2023-06-01 23:45:00', 16, 3),
+('Blockchain Básico', '2023-08-12 18:45:00', '2023-08-15 23:45:00', '2023-05-26 18:45:00', '2023-05-26 23:45:00', 0, 1),
+('Decolando sua carreira', '2023-12-12 18:45:00', '2023-12-12 23:45:00', '2023-08-26 18:45:00', '2023-08-26 23:45:00', 59, 4),
+('Desmistificando Spring Framework', '2024-01-26 18:45:00', '2024-01-30 23:45:00', '2024-01-01 18:45:00', '2024-01-01 23:45:00', 16, 1),
+('Criptomoedas e Web3', '2023-05-30 18:45:00', '2023-05-30 23:45:00', '2023-05-30 18:45:00', '2023-05-30 23:45:00', 10, 1);
+
+insert into usuarios (nome, email, dataNascimento, senha, ocupacaoFK, numeroTelefone) values 
+('João', 'joao@gmail.com', '2000-01-01', 'dsdknoidn393943', 5, '19929286912'),
+('Maria', 'maria@gmail.com', '2002-05-11', 'dsdkner4553', 2, '19929294356'),
+('Clara', 'clara@gmail.com', '1999-01-01', 'wewer3434', 5, '19929296693'),
+('Roberto', 'roberto@gmail.com', '1998-12-01', '3434343ref', 1, '19929284271'),
+('Carlos', 'carlos@gmail.com', '1995-01-01', '343refefe', 6, '19968492912'),
+('Alex', 'alex@gmail.com', '2004-01-11', '448ffjfff', 2, '19927062912'),
+('José', 'jose@gmail.com', '1985-01-01', '4488fjjf', 5, '19939272912'),
+('Jéssica', 'jessica@gmail.com', '1997-01-01', 'ahhfhhff', 4, '19929292912');
+
+insert into locais (nome, lotacao, bloco) values 
+('Laboratório Eletrônica 01', 16, 'A'),
+('Laboratório Informática 02', 30, 'C'),
+('Laboratório Metalmecânica', 16, 'B'),
+('Auditório', 100, 'A'),
+('Laboratório Eletrônica 02', 16, 'A'),
+('Laboratório Ensaios Mecânicos', 32, 'D');
+
+ insert into progresso (status,  comentarios) values
+('Concluida', 'Sem Comentario'),
+('Não iniciada', 'Sem Comentario'),
+('Encerrada', 'Sem Comentario'),
+('Em andamento','Sem Comentario'),
+('Concluida', 'Sem Comentario'),
+('Concluida', 'Sem Comentario'),
+('Não iniciada', 'Sem Comentario');
+
+-- Crie uma consulta que mostre todas as tarefas ainda não iniciadas com as informações de seus respectivos envolvidos no processo;
+select t.descricao, u.nome, p.status
+from tarefas t 
+join progresso p on p.id = t.progresso
+join usuarios u on t.solicitacao = u.id 
+where p.status = 'Não iniciada'
+order by p.status;
+
+-- Crie uma consulta que mostre todos os locais que já tiveram associação a alguma tarefa;
+select t.localFK, l.nome, count(*) total from tarefas t
+join locais l on l.id = t.localFK
+group by t.localFK
+having total > 0;
+
+-- Crie uma consulta que mostre todos os usuários que não tiveram associação a nenhuma tarefa;
+select u.id, u.nome from usuarios u 
+where u.id not in(select t.solicitacao from tarefas t);
+
+-- Crie uma consulta que mostre todos eventos que ainda acontecerão e as tarefas que ainda não
+-- foram executadas nos locais destes eventos (essa consulta ajudará a gestão visualizar se há algum 
+-- problema que pode impactar os eventos)
+select p.status, t.descricao, e.nome, l.nome, e.inicio
+from tarefas t
+join locais l on t.localFK = l.id
+join eventos e on e.localFk = l.id
+join progresso p on t.progresso = p.id
+where p.status = "Não iniciada" and e.inicio > now();
+
+-- Crie uma consulta que mostre os locais e a quantidade de tarefas existentes (independente do status);
+select l.nome, count(*) localFK from tarefas t
+join locais l on t.localFK = l.id
+group by t.localFK;
+
+-- Crie uma consulta usando a estrutura nova do banco (gestão de ambientes) que use uma subquery no from;
+select l.nome, count(*) total from tarefas t
+join locais l on t.localFK = l.id
+join progresso p on t.progresso = p.id
+where p.status = "Concluída"
+group by t.localFK;
+
+-- Crie uma consulta que mostre os usuários e quantas tarefas possuem atribuídas (independente do status)
+select u.nome, count(*) total from tarefas t
+join usuarios u
+on t.solicitacao = u.id
+group by t.solicitacao;
+
+-- Crie uma consulta que mostre os usuários e quantas tarefas possuem atribuídas a serem feitas;
+select u.nome, count(*) total from tarefas t
+join usuarios u on t.solicitacao = u.id
+join progresso p on t.progresso = p.id
+where p.status = 'Não iniciada'
+group by t.solicitacao;
+
+-- Crie uma consulta que mostre a média por mês de quantas tarefas são criadas por local;
+select avg(abertura) as mediaMes from tarefas;
